@@ -49,15 +49,22 @@ Sepuluh algoritma *supervised learning* dilatih dan dievaluasi:
 
 ### Desain Eksperimen
 
-1.  **Pra-pemrosesan Data:**
-    * Nilai yang hilang (missing values) diimputasi menggunakan rata-rata (mean) untuk fitur numerik dan modus (mode) untuk fitur kategorikal.
-    * Fitur kategorikal diubah menjadi format numerik menggunakan `LabelEncoder`.
-    * Fitur numerik distandardisasi menggunakan `StandardScaler`.
-2.  **Pembagian Data:** Data dibagi menjadi 80% set pelatihan dan 20% set pengujian, dengan menggunakan `random_state=42` untuk memastikan reproduktifitas.
-3.  **Strategi Penyeimbangan Kelas:** Untuk mengatasi sifat kelas target yang tidak seimbang, tiga skenario diuji pada data pelatihan:
-    * **None (Tanpa Penyeimbangan):** Tidak ada teknik penyeimbangan yang diterapkan (menjadi *baseline*).
-    * **Random Over-Sampling (ROS):** Kelas minoritas di-sampling ulang dengan menduplikasi sampel yang ada.
-    * **SMOTE (Synthetic Minority Over-sampling Technique):** Sampel sintetis baru dibuat untuk kelas minoritas guna menciptakan batas keputusan yang lebih kuat.
+Eksperimen ini dirancang untuk mengevaluasi performa berbagai model secara sistematis dengan langkah-langkah berikut:
+
+#### 1. Pra-pemrosesan Data
+Langkah-langkah pembersihan dan persiapan data yang dilakukan adalah sebagai berikut:
+* **Imputasi *Missing Values*:** Nilai yang hilang diisi menggunakan rata-rata (*mean*) untuk fitur numerik dan modus (*mode*) untuk fitur kategorikal.
+* ***Encoding* Fitur Kategorikal:** Fitur non-numerik (misalnya, 'Gender', 'Occupation') diubah menjadi angka menggunakan `LabelEncoder`.
+* **Standardisasi Fitur Numerik:** Seluruh fitur numerik diskalakan menggunakan `StandardScaler` untuk menyamakan rentang nilainya, yang penting untuk beberapa model seperti SVM dan Regresi Logistik.
+
+#### 2. Pembagian Data
+Data dibagi menjadi **80% set pelatihan** dan **20% set pengujian**. Pembagian ini dilakukan secara **stratifikasi** berdasarkan kelas target untuk memastikan distribusi kelas yang proporsional di kedua set. Penggunaan `random_state=42` memastikan bahwa hasil eksperimen ini dapat direproduksi kembali.
+
+#### 3. Strategi Penyeimbangan Kelas
+Untuk mengatasi potensi bias akibat ketidakseimbangan kelas, tiga skenario berbeda dievaluasi **hanya pada data pelatihan**:
+* **Tanpa Balancing (`None`):** Model dilatih pada data asli sebagai *baseline* untuk perbandingan.
+* **Random Over-Sampling (`ROS`):** Sampel dari kelas-kelas minoritas diduplikasi secara acak untuk menyeimbangkan distribusi data.
+* **SMOTE:** Sampel sintetis baru dibuat untuk kelas-kelas minoritas. Teknik ini bertujuan untuk menciptakan batas keputusan yang lebih jelas dan robus antar kelas.
 
 ### Metrik Evaluasi
 
