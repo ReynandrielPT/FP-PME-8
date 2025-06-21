@@ -70,21 +70,23 @@ Kinerja model dinilai menggunakan metrik berikut:
 
 ### Ringkasan Performa
 
-* **Tanpa Penyeimbangan:** Sebagian besar model menunjukkan kinerja yang buruk pada data asli yang tidak seimbang. Model-model tersebut menunjukkan bias yang kuat terhadap kelas mayoritas dan gagal mengidentifikasi kelas minoritas seperti "High" dan "Very High" dengan benar. Contohnya, model SVM dasar sama sekali tidak dapat mengidentifikasi sebagian besar kelas, menghasilkan Macro F1-Score hanya 0,27.
-* **Dengan Penyeimbangan:** Penerapan ROS dan SMOTE secara dramatis meningkatkan kinerja model *ensemble* berbasis pohon (Random Forest, XGBoost, CatBoost, LightGBM) dan KNN. Skor Macro F1 mereka melonjak dari kisaran 0,50-0,60 menjadi di atas 0,80.
-* **Keterbatasan Model:** Model yang lebih sederhana seperti Regresi Logistik dan Gaussian Naive Bayes, serta ANN dan SVM (dengan konfigurasi saat ini), tidak mengalami peningkatan signifikan dan bahkan cenderung menurun kinerjanya. Hal ini menunjukkan bahwa keterbatasan fundamental dari model-model tersebut menjadi penghambat kinerja yang lebih besar daripada masalah ketidakseimbangan kelas itu sendiri.
+* **Tanpa Penyeimbangan:** Berlawanan dengan ekspektasi umum, model-model yang dilatih pada data asli yang tidak seimbang justru menunjukkan kinerja terbaik. Model seperti Regresi Logistik dan Gaussian Naive Bayes mampu mencapai skor Akurasi dan Macro F1 yang solid, menunjukkan bahwa data asli sudah cukup informatif.
+
+* **Dengan Penyeimbangan:** Penerapan teknik *oversampling* (ROS dan SMOTE) secara konsisten terbukti kontra-produktif. Hampir semua model, termasuk model *ensemble* berbasis pohon (Random Forest, XGBoost, CatBoost, LightGBM), mengalami penurunan kinerja. Hal ini mengindikasikan bahwa penambahan sampel sintetis atau duplikat justru memperkenalkan *noise* dan merusak pola yang ada.
+
+* **Fenomena Koreksi Berlebih:** Analisis *confusion matrix* menunjukkan bahwa penurunan performa ini seringkali disebabkan oleh fenomena 'koreksi berlebih' (*overcorrection*), di mana usaha untuk memperbaiki bias pada kelas minoritas justru menciptakan kebingungan baru yang signifikan pada kelas mayoritas.
 
 ### Model Pemenang
 
-Kombinasi yang paling efektif adalah **Random Forest** yang dipasangkan dengan **Random Over-Sampling (ROS)**.
+Kombinasi yang paling efektif adalah **Regresi Logistik** yang **tanpa menggunakan metode balancing**.
 
-* **Akurasi:** **0,87** 
-* **Macro F1-Score:** **0,87** 
+* **Akurasi:** **0,64**
+* **Macro F1-Score:** **0,63**
 
-Konfigurasi ini menunjukkan kemampuan superior dalam mengklasifikasikan sampel di kelima tingkat kecemasan dengan benar, membuktikan kekuatan dari penggabungan metode *ensemble* yang dirancang untuk mengurangi *overfitting* dengan teknik penyeimbangan data yang representatif.
+Konfigurasi ini menunjukkan kemampuan superior dalam memanfaatkan struktur data asli tanpa distorsi dari teknik *oversampling*. Kinerjanya yang tinggi menegaskan bahwa pada dataset ini, pemilihan model yang tepat lebih krusial daripada modifikasi distribusi data itu sendiri.
 
 ## 🚀 Kesimpulan
 
-Penelitian ini menegaskan bahwa *machine learning*, jika diimplementasikan dengan benar, memiliki potensi besar untuk deteksi dini kecemasan berdasarkan faktor gaya hidup. Kesimpulan utamanya adalah bahwa **penanganan ketidakseimbangan kelas bukan hanya sebuah rekomendasi, tetapi sebuah keharusan** untuk membangun model yang andal. Tanpanya, kinerja model cenderung rendah dan tidak stabil, terutama pada metrik Macro F1-Score.
+Penelitian ini menegaskan bahwa strategi penanganan data harus dievaluasi secara cermat untuk setiap kasus dan tidak bisa digeneralisasi. Kesimpulan utamanya adalah bahwa untuk dataset ini, **penanganan ketidakseimbangan kelas dengan metode *oversampling* justru menjadi bumerang**. Upaya menyeimbangkan data secara artifisial terbukti merusak kinerja model yang pada dasarnya sudah solid.
 
-Model *ensemble* berbasis pohon secara konsisten mendominasi, dengan kombinasi **Random Forest + ROS** muncul sebagai solusi dengan performa puncak, mencapai akurasi 0,87 dan Macro F1-Score 0,87.
+Model **Regresi Logistik pada data asli** muncul sebagai solusi dengan performa puncak, mencapai akurasi 0,64 dan Macro F1-Score 0,63, membuktikan bahwa memahami dan memercayai data asli terkadang lebih efektif daripada menerapkan teknik penyeimbangan secara membabi buta.
